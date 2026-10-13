@@ -26,7 +26,7 @@ def duration(path: Path) -> float:
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--voice", default="Daniel")
+    parser.add_argument("--voice", default="Samantha")
     parser.add_argument("--rate", type=int, default=165)
     args = parser.parse_args()
 
