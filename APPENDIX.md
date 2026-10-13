@@ -3,6 +3,9 @@
 Generative and Agentic AI for Business, MSc DSAIB 2026–2027. **Julian Fix** (solo): scoping, design, build,
 tests and demo. Built with Claude Code as coding agent.
 
+**Online demo:** https://lumatrail-content-desk.streamlit.app (recorded runs of the 14 test briefs, editable copy
+with live checks). **Code:** https://github.com/JFxhec/lumatrail-content-desk
+
 ## 1. Design rationale
 
 **User.** One LumaTrail marketing reviewer who turns campaign briefs into channel copy and signs it off.
@@ -57,7 +60,8 @@ but only catch listed wordings; the LLM checker catches paraphrases but is itsel
 
 ## 2. Reproduce
 
-See `README.md`. In short: Python 3.11, `uv`, Claude Code CLI signed in (`claude auth login`), then
+No setup: open the online demo, which replays the recorded test runs (it cannot call the model, since the
+prototype uses the Claude Code CLI). For live generation, see `README.md`. In short: Python 3.11, `uv`, Claude Code CLI signed in (`claude auth login`), then
 `streamlit run app.py` for the demo and `python run_tests.py` for the test table.
 
 - Model: Claude Sonnet (alias `sonnet`) through `claude -p`, no tools, no project settings, temperature not set.

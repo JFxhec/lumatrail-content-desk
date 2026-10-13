@@ -6,6 +6,9 @@ A local Streamlit application that turns a short campaign brief and the approved
 (subject and body) and a social post, traces every product claim to a fact ID, flags unsupported requests,
 asks when the brief is incomplete, and keeps a human approval step before publication.
 
+**Online demo: https://lumatrail-content-desk.streamlit.app** (replays the recorded runs of the 14 test briefs;
+live generation on a new brief needs the local setup below). Code: https://github.com/JFxhec/lumatrail-content-desk
+
 ## Files
 
 | Path | Content |
