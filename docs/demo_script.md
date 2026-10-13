@@ -1,0 +1,16 @@
+# Demo video script (about 4 minutes)
+
+Record with `Cmd+Shift+5` → Record entire screen (or the browser window) → Options → Microphone.
+Before recording: app running (`.venv/bin/streamlit run app.py`), browser at full screen, zoom 110–125%,
+tests already run. Live generation takes 20 to 60 seconds: pause the recording while it runs, or cut it later.
+
+| Time | Screen | Say |
+|---|---|---|
+| 0:00–0:30 | App home, Fact sheet tab | "LumaTrail, a small bottle brand, adapts the same product facts to different audiences, channels and languages. Generic rewrites invent free delivery, hot-drink claims or wrong care instructions, and the reviewer fixes them by hand. My user is that marketing reviewer. The goal is not more copy: it is copy they can approve with less rework. EDGE target: efficiency, fewer factual corrections, and better decisions, a clear status on what is ready and what needs an answer." |
+| 0:30–0:55 | Stay on Fact sheet | "I chose an application with a fixed route inside. The route is known in advance, draft, check, revise, review, so an agent would add cost without benefit. The baseline is one good reusable prompt with the same facts and the same model." |
+| 0:55–1:50 | Sidebar: pick **B3**, Generate. Review tab: status, "What the brief asked", claims table, live checks | "Routine but tricky: walkers, and the brief asks for '100% recycled' and 'keeps drinks hot for 24 hours'. The first call lists what the brief asked and decides: both are qualified, to the approved 60% recycled body and cold for 12 hours. Every claim carries its fact ID. A second, independent call checks the copy against the facts without seeing the brief, so the brief cannot talk it into a claim. Code checks the length limits and banned wordings. If anything fails, one revision, then the checks run again." |
+| 1:50–2:20 | Baseline comparison tab | "The baseline wrote similar copy here. Its exceptions are a free-text note, not a record the reviewer can check line by line." |
+| 2:20–2:50 | Sidebar: pick **B5**, Generate. Questions appear; choose English and type an audience, Rerun | "Difficult case: 'make it exciting', no audience, no language. The baseline guessed English and a general audience. The prototype writes nothing and asks. The reviewer answers here and reruns." |
+| 2:50–3:20 | Back on a draft: type "Totally leak-free in any bag." at the end of the body; checks stay green; Approve is still enabled | "Failure case. The reviewer adds 'leak-free'. The live checks are rules only and 'leak-free' is not in the list, so approval stays possible. Next improvement: run the fact checker again on edited copy before approval." |
+| 3:20–4:00 | Test results tab: metrics, table | "Fourteen tests, five from the case and nine added. With Sonnet, the baseline is already good on facts: 11 of 14 on my manual reading. Its two clear failures are the incomplete briefs, where it guessed. The prototype passes all 14, asks in both incomplete cases and gives evidence per claim, at four times the cost, about four cents per brief, and three times the latency, about 29 seconds. Editing time and engagement are not measured; they need real reviewers. Limits: a noisy fact checker, generic copy, rules in four languages only." |
+| 4:00–4:10 | Review tab, Approve | "Nothing is ever published automatically: a person approves, and the decision is logged." |
