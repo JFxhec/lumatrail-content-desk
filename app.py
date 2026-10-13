@@ -1,6 +1,7 @@
 """LumaTrail content desk: brief -> checked draft -> human review. Run with `streamlit run app.py`."""
 
 import json
+import os
 import time
 from datetime import datetime
 from html import escape
@@ -10,12 +11,29 @@ import pandas as pd
 import streamlit as st
 
 import theme as ui
+from llm import find_claude
 from pipeline import BRAND_RULES, DATA, FACTS, rule_checks, run_baseline, run_prototype, totals
 
 OUT = Path(__file__).parent / "outputs"
 LOG = OUT / "review_log.jsonl"
 CASES = json.loads((DATA / "test_cases.json").read_text())
 LANGUAGES = {"English": "en", "French": "fr", "German": "de", "Spanish": "es"}
+RESULTS = OUT / "test_results.json"
+RECORDED = {r["id"]: r for r in json.loads(RESULTS.read_text())["results"]} if RESULTS.exists() else {}
+
+
+def live_available() -> bool:
+    """Live mode needs the Claude Code CLI; without it (e.g. Streamlit Cloud) the app replays recorded test runs."""
+    if os.environ.get("LUMA_MODE") == "replay":
+        return False
+    try:
+        find_claude()
+        return True
+    except RuntimeError:
+        return False
+
+
+LIVE = live_available()
 
 st.set_page_config(page_title="LumaTrail content desk", layout="wide")
 st.markdown(ui.CSS, unsafe_allow_html=True)
@@ -30,32 +48,50 @@ def split_claims(claims):
             [c for c in claims if c.get("channel") == "social"])
 
 
+def show(result, brief, baseline=None):
+    d = result["draft"]
+    st.session_state.update(result=result, brief_used=brief, shown_at=time.time(), baseline=baseline,
+                            ed_subject=d.get("email_subject", ""), ed_body=d.get("email_body", ""),
+                            ed_social=d.get("social_post", ""))
+
+
 def generate(brief, model, with_baseline):
     with st.spinner("Drafting, checking facts and format, revising if needed…"):
         result = run_prototype(brief, model)
-    d = result["draft"]
-    st.session_state.update(result=result, brief_used=brief, shown_at=time.time(), baseline=None,
-                            ed_subject=d.get("email_subject", ""), ed_body=d.get("email_body", ""),
-                            ed_social=d.get("social_post", ""))
+    baseline = None
     if with_baseline:
         with st.spinner("Running the single-prompt baseline…"):
-            st.session_state.baseline = run_baseline(brief, model)
+            baseline = run_baseline(brief, model)
+    show(result, brief, baseline)
 
 
 # ---------- sidebar: the brief ----------
 with st.sidebar:
     st.header("Campaign brief")
-    options = ["Write my own brief"] + [f"{c['id']} · {c['brief']}" for c in CASES]
-    choice = st.selectbox("Start from", options)
-    default = "" if choice == options[0] else CASES[options.index(choice) - 1]["brief"]
-    brief = st.text_area("Brief", default, height=140, key=f"brief_{choice}",
-                         placeholder="Language; audience; what to focus on.")
-    model = st.selectbox("Model", ["sonnet", "haiku", "opus"])
-    with_baseline = st.checkbox("Also run the single-prompt baseline", value=True)
-    if st.button("Generate draft", type="primary", disabled=not brief.strip(), use_container_width=True):
-        generate(brief, model, with_baseline)
-    html('<div class="side-note">A brief needs a language and an audience. Offers, claims or details the fact '
-         'sheet does not support are omitted or qualified, never invented, and listed for the reviewer.</div>')
+    if LIVE:
+        options = ["Write my own brief"] + [f"{c['id']} · {c['brief']}" for c in CASES]
+        choice = st.selectbox("Start from", options)
+        default = "" if choice == options[0] else CASES[options.index(choice) - 1]["brief"]
+        brief = st.text_area("Brief", default, height=140, key=f"brief_{choice}",
+                             placeholder="Language; audience; what to focus on.")
+        model = st.selectbox("Model", ["sonnet", "haiku", "opus"])
+        with_baseline = st.checkbox("Also run the single-prompt baseline", value=True)
+        if st.button("Generate draft", type="primary", disabled=not brief.strip(), use_container_width=True):
+            generate(brief, model, with_baseline)
+        html('<div class="side-note">A brief needs a language and an audience. Offers, claims or details the fact '
+             'sheet does not support are omitted or qualified, never invented, and listed for the reviewer.</div>')
+    else:
+        cases = [c for c in CASES if c["id"] in RECORDED]
+        choice = st.selectbox("Test brief", [f"{c['id']} · {c['brief']}" for c in cases])
+        case = cases[[f"{c['id']} · {c['brief']}" for c in cases].index(choice)]
+        html(f'<div class="card" style="font-size:.9rem">{escape(case["brief"])}</div>')
+        if st.button("Show the recorded run", type="primary", use_container_width=True):
+            rec = RECORDED[case["id"]]
+            show(rec["prototype"], case["brief"], rec["baseline"])
+        html('<div class="side-note"><b>Online demo.</b> Live generation needs the Claude Code CLI, so this page '
+             'replays the recorded runs of the 14 test briefs (Claude Sonnet, 13 Oct 2026): real model outputs, '
+             'checks and baseline. Editing the copy and the live checks work as in the local app. '
+             'To generate on a new brief, run the app locally (see README).</div>')
 
 result = st.session_state.get("result")
 stage = "idle" if not result else ("clarify" if result["status"] == "needs_clarification" else "review")
@@ -81,11 +117,15 @@ One revision if anything fails.<br>4. You edit, approve or send back. Nothing is
             html(ui.status("clarify", "Needs clarification",
                            "The brief is missing information, so no copy was written. Answer and rerun.",
                            d.get("questions", [])))
-            with st.form("clarify"):
-                c1, c2 = st.columns(2)
-                lang = c1.selectbox("Language", list(LANGUAGES))
-                audience = c2.text_input("Audience", placeholder="e.g. office commuters")
-                submitted = st.form_submit_button("Rerun with these answers")
+            submitted = False
+            if not LIVE:
+                st.caption("In the local app the reviewer answers here and reruns the draft.")
+            else:
+                with st.form("clarify"):
+                    c1, c2 = st.columns(2)
+                    lang = c1.selectbox("Language", list(LANGUAGES))
+                    audience = c2.text_input("Audience", placeholder="e.g. office commuters")
+                    submitted = st.form_submit_button("Rerun with these answers")
             if submitted and audience.strip():
                 generate(f"{st.session_state.brief_used} Language: {lang}. Audience: {audience}.", model, with_baseline)
                 st.rerun()
@@ -96,7 +136,7 @@ One revision if anything fails.<br>4. You edit, approve or send back. Nothing is
             else:
                 html(ui.status("attention", "Needs attention",
                                f"{len(result['issues'])} issue(s) remain after one revision.", result["issues"]))
-            if result["revised"]:
+            if result["revised"] and result.get("first_issues"):
                 with st.expander("Fixed in the revision: issues found in the first draft"):
                     for i in result["first_issues"]:
                         st.markdown(f"- {i}")
