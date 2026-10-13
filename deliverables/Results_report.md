@@ -1,7 +1,4 @@
-# Results report: task success, latency and cost (Case 05)
-
-Generative and Agentic AI for Business, MSc DSAIB 2026–2027. **Julian Fix** (solo).  
-**Online demo:** https://lumatrail-content-desk.streamlit.app · **Code:** https://github.com/JFxhec/lumatrail-content-desk
+<div class="cover"><div class="kicker">MSc DSAIB · 2026–2027 · AI solution sprint</div><h1>Results: task success, latency and cost</h1><div class="case">LumaTrail content desk: on-brief, fact-checked product copy</div><table class="meta"><tr><td class="k">Author</td><td><b>Julian Fix</b> (solo project)</td></tr><tr><td class="k">Course</td><td>Generative and Agentic AI for Business · Prof. Shubin Yu</td></tr><tr><td class="k">Programme</td><td>MSc Data Science and AI for Business (DSAIB) · Year 2 · 2026–2027</td></tr><tr><td class="k">Case</td><td>Case 05 · Create product content that stays on brief</td></tr><tr><td class="k">Date</td><td>13 October 2026</td></tr><tr><td class="k">Links</td><td><a href="https://lumatrail-content-desk.streamlit.app">lumatrail-content-desk.streamlit.app</a> · <a href="https://github.com/JFxhec/lumatrail-content-desk">github.com/JFxhec/lumatrail-content-desk</a></td></tr></table></div>
 
 ## Tests
 
