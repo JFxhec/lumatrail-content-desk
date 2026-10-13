@@ -1,0 +1,23 @@
+## 01_intro | Screen: app home, then Fact sheet tab
+LumaTrail is a small reusable-bottle brand. Its marketing team adapts the same product facts for different audiences, channels and languages. Generic rewrites invent free delivery, hot-drink claims, or wrong care instructions, and a reviewer has to fix them by hand. My user is that reviewer. The goal is not more copy. It is copy they can approve with less rework. The EDGE target is efficiency, with fewer factual corrections, and better decisions: a clear status on what is ready, and what needs an answer.
+
+## 02_design | Screen: Fact sheet tab
+This is the fact sheet: six approved facts, and the only source of claims. I chose an application with a fixed route inside. The route is known in advance: draft, check, revise, review. So an agent would add cost, without adding value. The baseline is one good, reusable prompt, with the same facts and the same model.
+
+## 03_routine | Screen: pick B3, Generate, Review tab
+Here is a tricky brief. Weekend walkers, and it asks us to say "one hundred percent recycled", and "keeps drinks hot for twenty-four hours". The first call lists what the brief asked, and decides. Both requests are qualified: to the approved sixty percent recycled body, and cold for up to twelve hours. In the preview, every claim is underlined with the fact it comes from. A second, independent call checks the copy against the facts, without seeing the brief, so the brief cannot talk it into a claim. Code checks the length limits and the banned wordings. If anything fails, there is one revision, and the checks run again.
+
+## 04_baseline | Screen: Baseline comparison tab
+The baseline wrote similar copy here. But its exceptions are a free-text note, not a record the reviewer can check, line by line.
+
+## 05_difficult | Screen: pick B5, Generate, answer the questions, Rerun
+Now, a difficult case. "Make it exciting", with no audience, and no language. The baseline guessed English, and a general audience. The prototype writes nothing, and asks. The reviewer answers here, and reruns.
+
+## 06_failure | Screen: Edit the copy, add "Totally leak-free in any bag."
+And now, a failure case. In the edit panel, the reviewer adds: "totally leak-free in any bag". The live checks are rules only, and "leak-free" is not on the list. So the checks stay green, and approval is still possible. The next improvement is to run the fact checker again on edited copy, before approval.
+
+## 07_results | Screen: Test results tab
+Fourteen tests: five from the case, and nine that I added. With Sonnet, the baseline is already good on facts: eleven out of fourteen, on my manual reading. Its two clear failures are the incomplete briefs, where it guessed. The prototype passes all fourteen, asks in both incomplete cases, and gives evidence for every claim. The price is four times the cost, about four cents per brief, and three times the latency, about thirty seconds. Editing time and engagement are not measured; they need real reviewers. The limits: a noisy fact checker, fairly generic copy, and banned-word rules in four languages only.
+
+## 08_close | Screen: Review tab, Approve
+Nothing is ever published automatically. A person approves, and the decision is logged. Thank you.

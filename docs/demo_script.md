@@ -1,6 +1,9 @@
 # Demo video script (about 4 minutes)
 
-Record with `Cmd+Shift+5` → Record entire screen (or the browser window) → Options → Microphone.
+Voice-over: generated with macOS text-to-speech (voice Daniel) from `voiceover/narration.txt`, one file per
+segment in `voiceover/` plus `voiceover_full.m4a`. Regenerate with `python voiceover/make_voiceover.py --voice <name>`.
+Record the screen without microphone (`Cmd+Shift+5`), then lay each segment over its screen in iMovie.
+In the failure segment, the edit is made in the "Edit the copy" panel under the preview.
 Before recording: app running (`.venv/bin/streamlit run app.py`), browser at full screen, zoom 110–125%,
 tests already run. Live generation takes 20 to 60 seconds: pause the recording while it runs, or cut it later.
 
